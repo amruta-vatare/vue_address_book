@@ -18,6 +18,16 @@ const routes = [
     path:'/addContact',
     name:'ContactAdd',
     component:() =>import('../components/ContactAdd.vue')
+  },
+  {
+    path:'/login',
+    name:'LoginUser',
+    component:() =>import('../components/LoginUser.vue')
+  },
+  {
+    path:'/userRegistration',
+    name:'UserRegistration',
+    component:() =>import('../components/UserRegistration.vue')
   }
 ]
 
