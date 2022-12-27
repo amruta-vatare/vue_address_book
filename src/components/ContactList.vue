@@ -10,12 +10,12 @@
     </div>
     <table id="display" class="table">
             <tr>
-                <th>Full Name</th>
-                <th>Email</th>
-                <th>Phone</th>
+                <th @click="sortContacts('fullName')">Full Name</th>
+                <th @click="sortContacts('email')">Email</th>
+                <th @click="sortContacts('phoneNumber')">Phone</th>
                 <th>Address</th>
-                <th>City</th>
-                <th>State</th>
+                <th @click="sortContacts('city')">City</th>
+                <th @click="sortContacts('state')">State</th>
                 <th>ZipCode</th>
                 <th></th>
             </tr>
@@ -47,15 +47,42 @@
         data(){
             return{
                 contactData : [],
-                contactService: new ContactService()
+                contactService: new ContactService(),
+                sortOrder:'A'
             }
         },
         methods:{
+          sortContacts(sortBy){
+            if(this.sortOrder == 'A'){
+              //sort by desc
+              this.sortOrder = 'D'
+              this.contactData.sort((a, b) => {
+              if (a[sortBy] < b[sortBy]) {
+                return -1
+              } else if (a[sortBy] > b[sortBy]) {
+                return 1
+              }
+                return 0
+              })
+          } else{  
+                  //sort by asc
+                  this.sortOrder = 'A'
+                  this.contactData.sort((a, b) => {
+                  if (a[sortBy] < b[sortBy]) {
+                      return 1
+                  }else if (a[sortBy] > b[sortBy]) {
+                      return -1
+                  }
+                      return 0
+                  })                
+            }
+          },
             getContactList(){
                 this.contactService.getAll()
                 .then(
                     res => {
                         this.contactData = res.data;
+                        this.sortContacts('fullName')
                         this.contactData.forEach(contactItem => {
                             localStorage.setItem(contactItem.id, contactItem.token);
                         });
