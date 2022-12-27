@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="Login()">
+    <!-- <form @submit.prevent="Login()">
         <div class="row-content">
           <input type="text" name="email" id="email" v-model="email" placeholder="Email"/>
         </div>
@@ -7,16 +7,42 @@
           <input type="password" name="password" id="password" v-model="password" placeholder="Password"/>
         </div>
         <button type="submit">Login</button>
-    </form>
+    </form> -->
+
+    <v-container>
+    <v-form ref="form"  @submit.prevent="Login()">
+        <v-row justify="center">
+          <v-col cols="8">
+                <v-app-bar class="pa-4 text-center primary rounded-lg rounded-b-0">
+      </v-app-bar>
+            </v-col>
+            <v-col cols="8">
+                <h3>Sign in to your Address book account</h3>
+            </v-col>
+            <v-col cols="8">
+                <v-text-field v-model="email" label="E-mail" @blur="$v.email.$touch()"></v-text-field>
+            </v-col>
+            <v-col cols="8">
+                <v-text-field v-model="password" label="Password" @blur="$v.password.$touch()">
+                        </v-text-field>
+            </v-col>
+            <v-col cols="8">
+                <v-btn class="mr-4" type="submit">Login</v-btn>
+                <v-btn class="mr-4" @click="goToSignUp()">Sign Up</v-btn>
+            </v-col>
+        </v-row>
+      </v-form>
+    </v-container>
 </template>
 <script>
 import UserService from '../service/UserService'
+import router from '@/router'
 export default{
     name:"LoginUser",
     data(){
       return{
-        email : "",
-        password : "",
+        email : "Pawar@gmail.com",
+        password : "sumit@123",
         userService : new UserService() 
       }      
     },
@@ -42,6 +68,9 @@ export default{
                     alert('Login failed for ' + this.email + ' ' + error.message )
                 }); 
         }
+      },
+      goToSignUp(){
+        router.push({ name: 'UserRegistration' })
       }
     }
 }

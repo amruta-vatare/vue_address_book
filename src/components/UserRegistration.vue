@@ -1,5 +1,5 @@
 <template>
-  <div class="body">
+  <!-- <div class="body">
     <div class=".form-content">
       <form @submit.prevent="Registration()" class="form">
         <div class="form-head">User Login</div>
@@ -18,10 +18,53 @@
           <button type="submit">Register</button>      
       </form>
     </div>
-  </div>
+  </div> -->
+  <v-container>
+    <v-form ref="form">
+        <v-row justify="center">
+            <v-col cols="8">
+                <v-app-bar class="pa-4 text-center primary rounded-lg rounded-b-0">
+      </v-app-bar>
+            </v-col>
+            <v-col cols="8">
+                <v-row justify="center">
+                    <v-col>
+                        <v-text-field type="text" name="userName" id="userName" v-model="userName" placeholder="User Name" @blur="$v.first_name.$touch()">
+                        </v-text-field>
+                    </v-col>
+                </v-row>
+            </v-col>
+            <v-col cols="8">
+                <v-row>
+                    <v-col>
+                        <v-text-field type="text" name="email" id="email" v-model="email" placeholder="Email" @blur="$v.email.$touch()"></v-text-field>
+                    </v-col>
+                </v-row>
+            </v-col>
+            <v-col cols="8">
+                <v-row justify="center">
+                    <v-col>
+                        <v-text-field type="password" name="password" id="password" v-model="password" placeholder="Password"  @blur="$v.password.$touch()">
+                        </v-text-field>
+                    </v-col>
+                    <v-col>
+                        <v-text-field type="password" name="confirmPassword" id="confirmPassword" v-model="confirmPassword" placeholder="Confirm Password"  @blur="$v.confirmPass.$touch()">
+                        </v-text-field>
+                    </v-col>
+                </v-row>
+            </v-col>
+            <v-col cols="8">
+                <v-btn class="mr-4" @click="Registration()">submit</v-btn>
+                <v-btn @click="clear()">clear</v-btn>
+                <v-btn class="ml-4" @click="signIn()">Sign In</v-btn>
+            </v-col>
+        </v-row>
+      </v-form>
+    </v-container>
 </template>
 <script>
   import UserService from '../service/UserService'
+  import router from '@/router'
 export default{
     name:"UserRegistration",
     data(){
@@ -51,12 +94,20 @@ export default{
                     console.log(response);
                     alert('Registration success for ' + this.userName)
                     localStorage.setItem(response.data.email, response.data.token);
+                    router.push({ name: 'LoginUser' })
                 })
                 .catch(error => {
                     alert('Registration failed for ' + this.userName + ' ' + error.message )
                 }); 
             }
-        }
+        },
+    clear () {
+      this.$refs.form.reset()
+      this.name = ''
+      this.email = ''
+      this.select = null
+      this.checkbox = false
+    }
     }
 }
 </script>

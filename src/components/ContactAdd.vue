@@ -1,5 +1,11 @@
 <template>
    <div class="body">
+    <v-snackbar v-model="snackbar" :multi-line="multiLine" color="blue-grey" absolute rounded="pill" centered> 
+      {{ snackbarMessage }}
+      <template v-slot:action="{ attrs }">
+        <v-btn color="primary" v-bind="attrs" rounded="pill" @click="snackbar = false">Close</v-btn>
+      </template>
+    </v-snackbar>
         <div class="form-content">
         <form class="form" @submit.prevent="addContact">
             <div class="form-head">Add New Contact</div>
@@ -44,19 +50,20 @@
  </template>
 <script>
 import ContactService from '@/service/ContactService';
-
     export default {
         name:'ContactAdd',
         data(){
             return{
-                fullName:'',
-                address:'',
-                phoneNumber:'',
-                email:'',
-                city:'',
-                state:'',
-                zipCode:'',
+                fullName:'Suraj Sahil Patil',
+                address:'Keshav Nagar Mumbai',
+                phoneNumber:'9098884548',
+                email:'vatareamruta615@gmail.com',
+                city:'Maumbai',
+                state:'Maharashtra',
+                zipCode:'511513',
                 response:'',
+                snackbar:true,
+                snackbarMessage: '',
                 contactService: new ContactService()
             }
         },
@@ -73,13 +80,23 @@ import ContactService from '@/service/ContactService';
                 })
                 .then(response => {
                     this.response = JSON.stringify(response, null, 2)
-                    alert('Contact ' + this.fullName + ' added successfully')
+                    this.snackbarMessage = 'Contact ' + this.fullName + ' added successfully'
+                    this.snackbar= true
                     location.href = location.hostname;
                 })
                 .catch(error => {
-                    alert('Error adding Contact ' + this.fullName + ' ' + error.message )
-                    this.response = 'Error: ' + error.response.status
+                    console.log(error)
+                    if(error.response.status == '400'){
+                        this.snackbarMessage = 'Error adding Contact ' + error.response.data
+                        this.snackbar= true
+                    }else{
+                        this.snackbarMessage = 'Error adding Contact ' + error.response.status + ' ' + error.response.data
+                        this.snackbar= true
+                        // alert('Error adding Contact ' + this.fullName + ' ' + error.message )
+                        // this.response = 'Error: ' + error.response.status
+                    }
                 });      
+
             }
         }
     }
