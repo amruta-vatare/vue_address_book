@@ -19,4 +19,12 @@ export default class ContactService
    getContactById(token){
       return axios.get('http://localhost:8080/addressBook/get/'+token);
    }
+
+   getContactsBySort(sortOrder,sortBy){
+      return axios.get('http://localhost:8080/addressBook/allByOrder/'+sortBy+'/'+sortOrder);
+   }
+
+   getContactBySearchString(searchString){
+      return axios.get('http://localhost:8080/addressBook/searchContact/'+searchString);
+   }
 }

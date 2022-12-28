@@ -62,7 +62,7 @@ import ContactService from '@/service/ContactService';
                 state:'Maharashtra',
                 zipCode:'511513',
                 response:'',
-                snackbar:true,
+                snackbar:false,
                 snackbarMessage: '',
                 contactService: new ContactService()
             }

@@ -2,8 +2,13 @@
   <div class="main-content">
     <div class="header-content">
             <div class="contact-detail-text">
-                Contact Details <div v-text="contactData.length" class="contact-count">10</div>
+                Contact Details <div v-text="contactData.length" class="contact-count"></div>
             </div>
+            <div class="searchBox">
+            <v-text-field label="Search here" solo v-model="searchText">
+                <v-icon slot="append" color="#0476D0">mdi-magnify</v-icon>
+            </v-text-field>
+    </div>
              <router-link to="/addContact" class="add-button">
                 <img src="../assets/plus-math.png"  height="20px" width="20px" alt="">Add Contact
             </router-link> 
@@ -48,41 +53,52 @@
             return{
                 contactData : [],
                 contactService: new ContactService(),
-                sortOrder:'A'
+                sortOrder:'ASC',
+                searchText:''
             }
         },
         methods:{
           sortContacts(sortBy){
-            if(this.sortOrder == 'A'){
+            if(this.sortOrder == 'ASC'){
               //sort by desc
-              this.sortOrder = 'D'
-              this.contactData.sort((a, b) => {
-              if (a[sortBy] < b[sortBy]) {
-                return -1
-              } else if (a[sortBy] > b[sortBy]) {
-                return 1
-              }
-                return 0
-              })
+              this.sortOrder = 'DESC'
+            //   this.contactData.sort((a, b) => {
+            //   if (a[sortBy] < b[sortBy]) {
+            //     return -1
+            //   } else if (a[sortBy] > b[sortBy]) {
+            //     return 1
+            //   }
+            //     return 0
+            //   })
+              this.contactService.getContactsBySort(this.sortOrder,sortBy).then(
+                res => {
+                    this.contactData = res.data;
+                }
+              )
+            
           } else{  
                   //sort by asc
-                  this.sortOrder = 'A'
-                  this.contactData.sort((a, b) => {
-                  if (a[sortBy] < b[sortBy]) {
-                      return 1
-                  }else if (a[sortBy] > b[sortBy]) {
-                      return -1
-                  }
-                      return 0
-                  })                
+                  this.sortOrder = 'ASC'
+                //   this.contactData.sort((a, b) => {
+                //   if (a[sortBy] < b[sortBy]) {
+                //       return 1
+                //   }else if (a[sortBy] > b[sortBy]) {
+                //       return -1
+                //   }
+                //       return 0
+                //   })          
+                  this.contactService.getContactsBySort(this.sortOrder,sortBy).then(
+                    res => {
+                        this.contactData =  res.data;
+                    }
+                )
             }
           },
             getContactList(){
-                this.contactService.getAll()
+                this.contactService.getContactsBySort('ASC','city')
                 .then(
                     res => {
                         this.contactData = res.data;
-                        this.sortContacts('fullName')
                         this.contactData.forEach(contactItem => {
                             localStorage.setItem(contactItem.id, contactItem.token);
                         });
@@ -108,6 +124,26 @@
             },
             getTokenFromLocalStorage(id){
                 return localStorage.getItem(id);
+            },
+            getContactBySearchString(searchString) {
+                this.contactService.getContactBySearchString(searchString)
+                .then(
+                    res => {
+                    this.contactData = res.data
+                })
+                .catch(error => {
+                alert('Error getting Contact from server for given string ' + error.message)
+                })
+            },
+        },
+        watch:{
+            searchText(newValue,OldValue){
+                console.log(newValue,OldValue)
+                if(newValue.length>0){
+                    this.getContactBySearchString(newValue);
+                }else{
+                    this.getContactList()
+                }  
             }
         },
         created(){
@@ -116,6 +152,11 @@
     }
 </script>
 <style scoped>
+  .searchBox
+  {
+    max-height: 46px;
+    width: 50%;
+  }
 .main-content {
     display: flex;
     flex-direction: column;
@@ -141,7 +182,7 @@
     opacity: 1;
 }
 .contact-count{
-    background-color: #82a70c;
+    background-color: #0476D0;
     color: #ffffff;
     border-radius: 42%;
     font-size: 16px;
@@ -154,7 +195,7 @@
     letter-spacing: 0px;
     color: #ffffff;
     opacity: 1;
-    background: #82a70c 0% 0% no-repeat padding-box;
+    background: #0476D0 0% 0% no-repeat padding-box;
     border: none;
     border-radius: 5px;
     padding: 5px 18px;
